@@ -34,40 +34,7 @@ output "token" {
     value = "${data.kubernetes_secret.root.data}"
 }
 
-#helm install --namespace rook-ceph rook-release/rook-ceph
-resource "helm_release" "rook-operator" {
-    name       = "rook"
-    namespace  = "persistence"
-    repository = "${data.helm_repository.rook.metadata.0.name}"
-    chart      = "rook-ceph"
-
-    values = [ <<EOF
-        resources:
-            limits:
-                cpu: 100m
-                memory: 128Mi
-            requests:
-                cpu: 100m
-                memory: 128Mi
-EOF
-    ]
-}
-
-resource "helm_release" "openebs" {
-    count      = 0
-    name       = "openebs"
-    namespace  = "persistence"
-    repository = "${data.helm_repository.stable.metadata.0.name}"
-    chart      = "openebs"
-    version    = "1.0.0" # app version 1.0.0
-
-    set {
-        # WTF --- don't send Google anything by default.
-        name  = "analytics.enabled"
-        value = "false"
-    }
-}
-
+# Then on: http://localhost:8001/api/v1/namespaces/monitoring/services/http:my-prometheus-server:80/proxy/graph
 resource "helm_release" "prometheus" {
     name       = "my-prometheus"
     namespace  = "monitoring"
