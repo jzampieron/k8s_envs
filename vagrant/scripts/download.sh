@@ -1,9 +1,12 @@
 #!/bin/bash
 
 # 'darwin' or 'linux'
-PLATFORM=`uname | tr '[:upper:]' '[:lower:]'`
+PLATFORM='linux'
 
 BINARY_OUTPUT_DIR="binaries/"
+
+CFSSL_OUTPUT_DIR="${BINARY_OUTPUT_DIR}cfssl/"
+CFSSL_DOWNLOAD_PATH="https://pkg.cfssl.org/R1.2/"
 
 ETCD_VERSION="v3.2.10"
 ETCD_OUTPUT_DIR="${BINARY_OUTPUT_DIR}etcd/"
@@ -26,6 +29,12 @@ CNI_PLUGIN_DOWNLOAD_PATH="https://github.com/containernetworking/plugins/release
 if [ ! -f ${ETCD_OUTPUT_DIR}${ETCD_BINARY_NAME} ]; then
   curl -L --create-dirs "https://storage.googleapis.com/etcd/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-amd64.tar.gz" -o "${ETCD_OUTPUT_DIR}${ETCD_BINARY_NAME}"
 fi
+
+for binary in cfssl_linux-amd64 cfssljson_linux-amd64; do
+  if [ ! -f ${CFSSL_OUTPUT_DIR}${binary} ]; then
+    curl -L --create-dirs "${CFSSL_DOWNLOAD_PATH}${binary}" -o "${CFSSL_OUTPUT_DIR}${binary}"
+  fi
+done
 
 for binary in kube-apiserver kube-controller-manager kube-scheduler kubectl kube-proxy kubelet; do
   if [ ! -f ${KUBERNETES_OUTPUT_DIR}${binary} ]; then

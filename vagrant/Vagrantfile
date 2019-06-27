@@ -1,6 +1,6 @@
 BOX_OS = "centos/7"
 BOX_VERSION = "1710.01"
-NETWORK_ADAPTER_NAME = "Microsoft KM-TEST Loopback Adapter"
+NETWORK_ADAPTER_NAME = "en0: Wi-Fi (AirPort)"
 CERT_PATH = "/vagrant/certs/"
 BINARY_PATH = "/vagrant/binaries/"
 
@@ -325,9 +325,6 @@ sudo systemctl daemon-reload
 sudo systemctl enable kube-scheduler
 sudo systemctl start kube-scheduler
 
-cat >> /etc/profile >>"EOF"
-source <(kubectl completion bash)
-EOF
 SCRIPT
 
 $cmdKubernetesNodeSetup = <<SCRIPT
