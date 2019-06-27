@@ -1,5 +1,8 @@
 #!/bin/bash
 
+BASEDIR=`dirname $0`
+PLATFORM=`uname | tr '[:upper:]' '[:lower:]'`
+
 export CERT_PATH=certs/
 
 rm -rf ${CERT_PATH}
@@ -32,16 +35,16 @@ cat > ca-csr.json <<EOF
   "names": [
     {
       "C": "NO",
-      "L": "Istanbul",
+      "L": "US",
       "O": "Kubernetes",
       "OU": "Cluster",
-      "ST": "Istanbul"
+      "ST": "US"
     }
   ]
 }
 EOF
 
-cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+cfssl gencert -initca /data/certs/ca-csr.json | cfssljson -bare ca
 
 mkdir etcd
 pushd etcd
@@ -56,10 +59,10 @@ cat > etcd-csr.json <<EOF
   "names": [
     {
       "C": "NO",
-      "L": "Istanbul",
+      "L": "US",
       "O": "Kubernetes",
       "OU": "Cluster",
-      "ST": "Istanbul"
+      "ST": "US"
     }
   ]
 }
@@ -71,7 +74,7 @@ cfssl gencert \
   -config=../ca-config.json \
   -hostname=10.240.0.11,10.240.0.12,10.240.0.13,etcd1,etcd2,etcd3,127.0.0.1,localhost \
   -profile=kubernetes \
-  etcd-csr.json | cfssljson -bare etcd
+  /data/certs/etcd/etcd-csr.json | cfssljson -bare etcd
 
 popd
 
@@ -88,10 +91,10 @@ cat > kubernetes-csr.json <<EOF
   "names": [
     {
       "C": "NO",
-      "L": "Istanbul",
+      "L": "US",
       "O": "Kubernetes",
       "OU": "Cluster",
-      "ST": "Istanbul"
+      "ST": "US"
     }
   ]
 }
@@ -103,4 +106,5 @@ cfssl gencert \
   -config=../ca-config.json \
   -hostname=10.32.0.1,10.240.0.21,10.240.0.22,10.240.0.23,kubemaster1,kubemaster2,kubemaster3,127.0.0.1,localhost \
   -profile=kubernetes \
-  kubernetes-csr.json | cfssljson -bare kubernetes
+  /data/certs/kubernetes/kubernetes-csr.json | cfssljson -bare kubernetes
+
