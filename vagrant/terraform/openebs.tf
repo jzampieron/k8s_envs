@@ -1,5 +1,6 @@
 
 resource "helm_release" "openebs" {
+    depends_on = [ "helm_release.coredns" ]
     name       = "openebs"
     namespace  = "openebs"
     repository = "${data.helm_repository.stable.metadata.0.name}"

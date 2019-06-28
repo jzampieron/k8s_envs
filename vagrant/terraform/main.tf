@@ -1,16 +1,6 @@
 
-data "helm_repository" "stable" {
-    name = "stable"
-    url  = "https://kubernetes-charts.storage.googleapis.com"
-}
-
-#helm repo add rook-release https://charts.rook.io/release
-data "helm_repository" "rook" {
-    name = "rook-release"
-    url  = "https://charts.rook.io/release"
-}
-
 resource "helm_release" "coredns" {
+    depends_on = [ "null_resource.calico" ]
     name       = "coredns"
     repository = "${data.helm_repository.stable.metadata.0.name}"
     chart      = "coredns"
@@ -45,6 +35,7 @@ output "token" {
 
 # Then on: http://localhost:8001/api/v1/namespaces/monitoring/services/http:my-prometheus-server:80/proxy/graph
 resource "helm_release" "prometheus" {
+    depends_on = [ "helm_release.coredns" ]
     name       = "my-prometheus"
     namespace  = "monitoring"
     repository = "${data.helm_repository.stable.metadata.0.name}"
