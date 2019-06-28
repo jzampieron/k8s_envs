@@ -72,7 +72,7 @@ cfssl gencert \
   -ca=../ca.pem \
   -ca-key=../ca-key.pem \
   -config=../ca-config.json \
-  -hostname=10.240.0.11,10.240.0.12,10.240.0.13,etcd1,etcd2,etcd3,127.0.0.1,localhost \
+  -hostname=10.240.0.10,10.240.0.11,10.240.0.12,etcd1,etcd2,etcd3,127.0.0.1,localhost \
   -profile=kubernetes \
   /data/certs/etcd/etcd-csr.json | cfssljson -bare etcd
 
@@ -104,7 +104,7 @@ cfssl gencert \
   -ca=../ca.pem \
   -ca-key=../ca-key.pem \
   -config=../ca-config.json \
-  -hostname=10.32.0.1,10.240.0.21,10.240.0.22,10.240.0.23,kubemaster1,kubemaster2,kubemaster3,127.0.0.1,localhost \
+  -hostname=10.32.0.1,10.240.0.20,10.240.0.21,10.240.0.22,kubemaster1,kubemaster2,kubemaster3,127.0.0.1,localhost \
   -profile=kubernetes \
   /data/certs/kubernetes/kubernetes-csr.json | cfssljson -bare kubernetes
 
