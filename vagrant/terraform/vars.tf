@@ -1,4 +1,9 @@
 
+variable "k8s_cidr" {
+    type    = "string"
+    default = "10.240.0.0/16"
+}
+
 variable "k8s_api_url" {
     type    = "string"
     default = "https://10.240.0.20:6443"
