@@ -22,5 +22,5 @@ variable "k8s_cluster_root_user" {
 # Get via `kubectl describe secrets default`
 variable "k8s_ui_secret_name" {
     type    = "string"
-    default = "default-token-clkjb"
+    default = "default-token-kzf5m"
 }

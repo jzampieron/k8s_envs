@@ -77,6 +77,7 @@ $cmdInitialSetup = <<SCRIPT
 service firewalld stop
 systemctl disable firewalld
 yum -y remove firewalld
+yum -y install socat 
 
 cat <<EOF > /etc/selinux/config
 SELINUX=disabled
