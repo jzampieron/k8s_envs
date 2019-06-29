@@ -1,6 +1,7 @@
 
 resource "helm_release" "coredns" {
-    depends_on = [ "null_resource.calico" ]
+    #depends_on = [ "null_resource.calico" ]
+    depends_on = [ "null_resource.flannel" ]
     name       = "coredns"
     repository = "${data.helm_repository.stable.metadata.0.name}"
     chart      = "coredns"

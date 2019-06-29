@@ -429,7 +429,6 @@ Requires=docker.service
 
 [Service]
 ExecStart=/usr/bin/kubelet \
-  --allow-privileged=true \
   --cloud-provider= \
   --cluster-dns=10.32.0.10 \
   --cluster-domain=cluster.local \

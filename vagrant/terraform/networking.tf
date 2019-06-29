@@ -12,8 +12,15 @@ resource "local_file" "calicocfg" {
 }
 
 resource "null_resource" "calico" {
-
+    count = 1
     provisioner "local-exec" {
         command = "kubectl --context=${var.k8s_cluster_context} apply -f ${path.cwd}/outputs/calico.yaml"
+    }
+}
+
+resource "null_resource" "flannel" {
+    count = 0
+    provisioner "local-exec" {
+        command = "kubectl --context=${var.k8s_cluster_context} apply -f ${path.cwd}/files/kube-flannel.yaml"
     }
 }
