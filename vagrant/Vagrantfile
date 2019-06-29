@@ -411,9 +411,27 @@ cat > 10-bridge.conf <<EOF
     "ipam": {
         "type": "host-local",
         "ranges": [
-          [{"subnet": "10.200.%{number}.0/24"}]
+          [{"subnet": "10.240.%{number}.0/24"}]
         ],
         "routes": [{"dst": "0.0.0.0/0"}]
+    }
+}
+EOF
+
+cat > 11-calico.conf <<EOF
+{
+    "name": "calico",
+    "cniVersion": "0.1.0",
+    "type": "calico",
+    "kubernetes": {
+        "kubeconfig": "/var/lib/kubelet/kubeconfig"
+    },
+    "ipam": {
+        "type": "calico-ipam",
+        "assign_ipv4": "true",
+        "assign_ipv6": "true",
+        "ipv4_pools": ["10.200.%{number}.0/24", "default-ipv4-ippool"],
+        "ipv6_pools": ["2001:db8::1/120", "default-ipv6-ippool"]
     }
 }
 EOF
@@ -424,7 +442,7 @@ cat > 99-loopback.conf <<EOF
     "type": "loopback"
 }
 EOF
-sudo mv 10-bridge.conf 99-loopback.conf /etc/cni/net.d/
+sudo mv 10-bridge.conf 11-calico.conf 99-loopback.conf /etc/cni/net.d/
 
 cat > kubelet.service <<"EOF"
 [Unit]
