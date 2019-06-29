@@ -77,7 +77,7 @@ $cmdInitialSetup = <<SCRIPT
 service firewalld stop
 systemctl disable firewalld
 yum -y remove firewalld
-yum -y install socat 
+yum -y install socat
 
 cat <<EOF > /etc/selinux/config
 SELINUX=disabled
@@ -340,6 +340,11 @@ sudo cp docker/docker* /usr/bin/
 
 cp #{BINARY_PATH}cni/cni.tgz .
 tar -xvf cni.tgz -C /opt/cni/bin/
+
+cat > /etc/NetworkManager/conf.d/calico.conf <<"EOF"
+[keyfile]
+unmanaged-devices=interface-name:cali*;interface-name:tunl*
+EOF
 
 cat > docker.service <<"EOF"
 [Unit]
