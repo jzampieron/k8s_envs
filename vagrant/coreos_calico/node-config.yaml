@@ -11,7 +11,7 @@ write_files:
       clusters:
       - name: local
         cluster:
-          server: http://172.18.18.101:8080
+          server: http://172.18.18.111:8080
       users:
       - name: kubelet
       contexts:
@@ -25,13 +25,14 @@ coreos:
   update:
     reboot-strategy: off
   units:
+    # Local proxy for the etcd cluster.
     - name: etcd-member.service
       command: start
       drop-ins:
         - name: 10-etcd-member_proxy.conf
           content: |
             [Service]
-            Environment="ETCD_OPTS=grpc-proxy start --listen-addr=127.0.0.1:2379 --endpoints=172.18.18.101:2379"
+            Environment="ETCD_OPTS=grpc-proxy start --listen-addr=127.0.0.1:2379 --endpoints=172.18.18.111:2379"
             Environment="ETCD_IMAGE_TAG=v3.2.9"
     - name: kubelet.service
       runtime: true
@@ -80,7 +81,7 @@ coreos:
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-proxy
         # --cluster-cidr must match the IP Pool defined in the manifest
         ExecStart=/opt/bin/kube-proxy \
-        --master=http://172.18.18.101:8080 \
+        --master=http://172.18.18.111:8080 \
         --cluster-cidr="192.168.0.0/16" \
         --proxy-mode=iptables \
         --logtostderr=true
