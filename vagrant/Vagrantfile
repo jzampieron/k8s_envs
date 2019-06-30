@@ -22,7 +22,7 @@ $etcdServerList = ""
 # the default kubernetes service (ClusterIP) created by
 # API server assumes a .1 address.
 $kubernetesMasterNamePrefix = "kubemaster"
-$kubernetesMasterStartIp = 1
+$kubernetesMasterStartIp = 20
 $kubernetesMasters = []
 $kubernetesMasterList = ""
 
