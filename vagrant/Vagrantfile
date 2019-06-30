@@ -18,8 +18,11 @@ $etcdServers = []
 $etcdClusterConfig = ""
 $etcdServerList = ""
 
+# For some reason I can't figure out right now
+# the default kubernetes service (ClusterIP) created by
+# API server assumes a .1 address.
 $kubernetesMasterNamePrefix = "kubemaster"
-$kubernetesMasterStartIp = 20
+$kubernetesMasterStartIp = 1
 $kubernetesMasters = []
 $kubernetesMasterList = ""
 
@@ -386,7 +389,7 @@ kind: Config
 clusters:
 - cluster:
     certificate-authority: /var/lib/kubernetes/ca.pem
-    server: https://#{$ipGroup}.#{$kubernetesMasterStartIp + 1}:6443
+    server: https://#{$ipGroup}.#{$kubernetesMasterStartIp}:6443
   name: kubernetes
 contexts:
 - context:
@@ -473,7 +476,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 ExecStart=/usr/bin/kube-proxy \
-  --master=https://#{$ipGroup}.#{$kubernetesMasterStartIp + 1}:6443 \
+  --master=https://#{$ipGroup}.#{$kubernetesMasterStartIp}:6443 \
   --kubeconfig=/var/lib/kubelet/kubeconfig \
   --proxy-mode=iptables \
   --cluster-cidr=10.200.0.0/16 \

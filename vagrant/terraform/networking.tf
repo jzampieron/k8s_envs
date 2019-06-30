@@ -11,15 +11,17 @@ resource "local_file" "calicocfg" {
     filename = "${path.cwd}/outputs/calico.yaml"
 }
 
+# Calico just won't auto-install.
+# Something is wrong with the api-server default ip address. 
 resource "null_resource" "calico" {
-    count = 1
+    count = 0
     provisioner "local-exec" {
         command = "kubectl --context=${var.k8s_cluster_context} apply -f ${path.cwd}/outputs/calico.yaml"
     }
 }
 
 resource "null_resource" "flannel" {
-    count = 0
+    count = 1
     provisioner "local-exec" {
         command = "kubectl --context=${var.k8s_cluster_context} apply -f ${path.cwd}/files/kube-flannel.yaml"
     }
