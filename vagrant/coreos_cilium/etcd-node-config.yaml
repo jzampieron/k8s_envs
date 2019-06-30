@@ -1,0 +1,35 @@
+#cloud-config
+---
+write_files:
+  # Kubeconfig file.
+  - path: /etc/kubernetes/kubeconfig
+    owner: root
+    permissions: 0755
+    content: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+      - name: local
+        cluster:
+          server: http://172.18.18.101:8080
+      users:
+      - name: kubelet
+      contexts:
+      - context:
+          cluster: local
+          user: kubelet
+        name: kubelet-context
+      current-context: kubelet-context
+
+coreos:
+  update:
+    reboot-strategy: off
+  units:
+    - name: etcd-member.service
+      command: start
+      drop-ins:
+        - name: 10-etcd.conf
+          content: |
+            [Service]
+            Environment="ETCD_OPTS=--name \"etcdserver\" --listen-client-urls=http://0.0.0.0:2379 --advertise-client-urls=http://$private_ipv4:2379 --listen-client-urls=http://0.0.0.0:2379,http://0.0.0.0:4001 --listen-peer-urls=http://0.0.0.0:2380"
+            Environment="ETCD_IMAGE_TAG=v3.2.9"
