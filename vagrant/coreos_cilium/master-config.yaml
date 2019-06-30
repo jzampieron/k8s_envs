@@ -44,13 +44,13 @@ coreos:
         After=etcd-member.service
         [Service]
         TimeoutStartSec=1800
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kube-apiserver
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kube-apiserver
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kubectl
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-apiserver
         ExecStart=/opt/bin/kube-apiserver \
         --allow-privileged=true \
-        --etcd-servers=http://$private_ipv4:2379 \
+        --etcd-servers=http://172.18.18.101:2379 \
         --runtime-config=extensions/v1beta1=true,extensions/v1beta1/networkpolicies=true \
         --insecure-bind-address=0.0.0.0 \
         --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota \
@@ -70,7 +70,7 @@ coreos:
         After=kube-apiserver.service
         [Service]
         TimeoutStartSec=1800
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kube-controller-manager
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kube-controller-manager
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-controller-manager
         # --cluster-cidr must match the IP Pool defined in the manifest
         ExecStart=/opt/bin/kube-controller-manager \
@@ -93,7 +93,7 @@ coreos:
         After=kube-apiserver.service
         [Service]
         TimeoutStartSec=1800
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kube-scheduler
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kube-scheduler
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-scheduler
         ExecStart=/opt/bin/kube-scheduler --master=$private_ipv4:8080
         Restart=always
@@ -111,7 +111,7 @@ coreos:
 
         [Service]
         TimeoutStartSec=1800
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubelet
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubelet
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kubelet
         ExecStart=/opt/bin/kubelet \
         --address=0.0.0.0 \
@@ -140,7 +140,7 @@ coreos:
         After=kubelet.service
         [Service]
         TimeoutStartSec=1800
-        ExecStartPre=/usr/bin/wget -N -P /opt/bin  https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kube-proxy
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin  https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kube-proxy
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-proxy
         # --cluster-cidr must match the IP Pool defined in the manifest
         ExecStart=/opt/bin/kube-proxy \
