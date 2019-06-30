@@ -20,9 +20,3 @@ variable "k8s_cluster_root_user" {
     type    = "string"
     default = "admin-vagrant-darwin"
 }
-
-# Get via `kubectl describe secrets default`
-variable "k8s_ui_secret_name" {
-    type    = "string"
-    default = "default-token-kzf5m"
-}

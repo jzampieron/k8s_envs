@@ -21,11 +21,23 @@ resource "helm_release" "dashboard" {
     version    = "1.5.2" # App version 1.10.1
 }
 
+# Equivalent to `kubectl describe secrets default`
+resource "null_resource" "k8s_ui_secret_name" {
+    provisioner "local-exec" {
+        command = "kubectl --context=${var.k8s_cluster_context} --namespace=default get secret -o jsonpath='{.items[0].metadata.name}' > ${path.cwd}/outputs/def_name"
+    }
+}
+
+data "local_file" "k8s_ui_secret_name" {
+    depends_on = [ "null_resource.k8s_ui_secret_name" ]
+    filename = "${path.cwd}/outputs/def_name"
+}
+
 # A root bearer token for accessing the dashboard.
 data "kubernetes_secret" "root" {
     depends_on = [ "helm_release.dashboard" ]
     metadata {
-        name      = "${var.k8s_ui_secret_name}"
+        name      = "${data.local_file.k8s_ui_secret_name.content}"
         namespace = "default"
     }
 }

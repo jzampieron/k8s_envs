@@ -17,6 +17,7 @@ data:
 
   # The CNI network configuration to install on each node.  The special
   # values in this config will be automatically populated.
+  # See: https://docs.projectcalico.org/master/reference/cni-plugin/configuration
   cni_network_config: |-
     {
       "name": "k8s-pod-network",
@@ -539,7 +540,7 @@ spec:
           env:
             # Name of the CNI config file to create.
             - name: CNI_CONF_NAME
-              value: "10-calico.conflist"
+              value: "11-calico.conf"
             # The CNI network config to install on each node.
             - name: CNI_NETWORK_CONFIG
               valueFrom:

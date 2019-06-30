@@ -14,7 +14,16 @@ A HA kubernetes cluster to be run with Vagrant.
   * Do a check: `kubectl --cluster=vagrant-darwin api-resources`
     * `vagrant-darwin` on macOS
     * `vagrant-linux` on Linux
-  * Run the terraform code to deploy applications and core items. 
+  * Run the terraform code to deploy applications and core items.
+
+# Networking
+
+## intro
+
+There are *3* networks at play:
+* The VM network (10.240.x.y)
+* The service network (10.32.x.y)
+* The calico network for pods (10.200.x.y)
 
 ## Pod Network
 To ping pods within pods running on different nodes, run below commands on the host machine:

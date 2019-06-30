@@ -4,6 +4,8 @@ provider "local" {}
 
 provider "template" {}
 
+provider "external" {}
+
 provider "kubernetes" {
     host = "${var.k8s_api_url}"
 
