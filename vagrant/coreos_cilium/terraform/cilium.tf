@@ -74,7 +74,7 @@ EOF
         #priorityClassName: system-node-critical
         restart_policy                   = "Always"
         #service_account                  = "cilium"
-        service_account_name             = "${kubernetes_service_account.cilium.metadata.name}"
+        service_account_name             = "${kubernetes_service_account.cilium.metadata.0.name}"
         termination_grace_period_seconds = 1
         #tolerations:
         #- operator: Exists
@@ -114,7 +114,7 @@ EOF
             value_from {
               config_map_key_ref {
                 key      = "flannel-master-device"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -125,7 +125,7 @@ EOF
             value_from {
               config_map_key_ref {
                 key      = "flannel-uninstall-on-exit"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -281,7 +281,7 @@ EOF
             value_from {
               config_map_key_ref {
                 key      = "clean-cilium-state"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -292,7 +292,7 @@ EOF
             value_from {
               config_map_key_ref {
                 key      = "clean-cilium-bpf-state"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -303,7 +303,7 @@ EOF
             value_from {
               config_map_key_ref {
                 key      = "wait-bpf-mount"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -385,7 +385,7 @@ EOF
         volume {
           name = "etcd-config-path"
           config_map {
-            name = "${kubernetes_config_map.cilium-config.metadata.name}"
+            name = "${kubernetes_config_map.cilium-config.metadata.0.name}"
             default_mode = "0420"
             items {
               key  = "etcd-config"
@@ -418,7 +418,7 @@ EOF
         volume {
           name = "cilium-config-path"
           config_map {
-            name = "${kubernetes_config_map.cilium-config.metadata.name}"
+            name = "${kubernetes_config_map.cilium-config.metadata.0.name}"
           }
         }
       } # end init_container
@@ -516,7 +516,7 @@ resource "kubernetes_deployment" "cilium-operator" {
             value_from {
               config_map_key_ref {
                 key      = "debug"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -527,7 +527,7 @@ resource "kubernetes_deployment" "cilium-operator" {
             value_from {
               config_map_key_ref {
                 key      = "cluster-name"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -538,7 +538,7 @@ resource "kubernetes_deployment" "cilium-operator" {
             value_from {
               config_map_key_ref {
                 key      = "cluster-id"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -549,7 +549,7 @@ resource "kubernetes_deployment" "cilium-operator" {
             value_from {
               config_map_key_ref {
                 key      = "disable-endpoint-crd"
-                name     = "${kubernetes_config_map.cilium-config.metadata.name}"
+                name     = "${kubernetes_config_map.cilium-config.metadata.0.name}"
                 #optional = true
               }
             }
@@ -616,13 +616,13 @@ resource "kubernetes_deployment" "cilium-operator" {
         #priority_class_name  = "system-node-critical"
         restart_policy       = "Always"
         #service_account      = "cilium-operator"
-        service_account_name = "${kubernetes_service_account.cilium-operator.metadata.name}"
+        service_account_name = "${kubernetes_service_account.cilium-operator.metadata.0.name}"
 
         # To read the etcd config stored in config maps
         volume {
           name = "etcd-config-path"
           config_map {
-            name         = "${kubernetes_config_map.cilium-config.metadata.name}"
+            name         = "${kubernetes_config_map.cilium-config.metadata.0.name}"
             default_mode = "0420"
             items {
               key  = "etcd-config"
@@ -663,6 +663,7 @@ resource "kubernetes_cluster_role" "cilium-operator" {
     api_groups = [ "" ]
     # to automatically delete [core|kube]dns pods so that are starting to being
     # managed by Cilium
+    resources = [ "pods" ]
     verbs = [ "get", "list", "watch", "delete" ]
   }
 
@@ -703,13 +704,7 @@ resource "kubernetes_cluster_role" "cilium" {
 
   rule {
     api_groups = [ "" ]
-    resources = [
-      "namespaces",
-      "services",
-      "nodes",
-      "endpoints",
-      "componentstatuses"
-    ]
+    resources = [ "namespaces", "services", "nodes", "endpoints", "componentstatuses" ]
     verbs = [
       "get",
       "list",
@@ -719,10 +714,7 @@ resource "kubernetes_cluster_role" "cilium" {
 
   rule {
     api_groups = [ "" ]
-    resources = [
-      "pods",
-      "nodes"
-    ]
+    resources = [ "pods", "nodes" ]
     verbs = [
       "get",
       "list",

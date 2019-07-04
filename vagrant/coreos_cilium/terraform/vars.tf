@@ -8,12 +8,13 @@ variable "k8s_pod_cidr" {
 
 variable "k8s_api_url" {
     type    = "string"
-    default = "https://10.240.0.20:6443"
+    # TODO - Https
+    default = "http://172.18.18.111:8080"
 }
 
 variable "k8s_cluster_context" {
     type    = "string"
-    default = "vagrant-cluster"
+    default = "vagrant-system"
 }
 
 variable "k8s_cluster_root_user" {
