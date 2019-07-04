@@ -14,7 +14,7 @@ provider "kubernetes" {
     #cluster_ca_certificate = "${file("~/.kube/cluster-ca-cert.pem")}"
 
     config_context_auth_info = "${var.k8s_cluster_root_user}"
-    config_context_cluster   = "${var.k8s_cluster_context}"
+    config_context_cluster   = "${var.k8s_cluster_name}"
 }
 
 provider "helm" {

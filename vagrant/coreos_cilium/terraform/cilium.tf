@@ -54,7 +54,7 @@ resource "kubernetes_daemonset" "cilium" {
           # https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/
           "scheduler.alpha.kubernetes.io/critical-pod" = ""
           "scheduler.alpha.kubernetes.io/tolerations"  = <<EOF
-            '[{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]'
+            [{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]
 EOF
         }
 

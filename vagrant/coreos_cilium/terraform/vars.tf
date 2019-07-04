@@ -12,6 +12,11 @@ variable "k8s_api_url" {
     default = "http://172.18.18.111:8080"
 }
 
+variable "k8s_cluster_name" {
+    type    = "string"
+    default = "vagrant-cluster"
+}
+
 variable "k8s_cluster_context" {
     type    = "string"
     default = "vagrant-system"
