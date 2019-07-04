@@ -13,7 +13,7 @@ variable "k8s_api_url" {
 
 variable "k8s_cluster_context" {
     type    = "string"
-    default = "vagrant-darwin"
+    default = "vagrant-cluster"
 }
 
 variable "k8s_cluster_root_user" {

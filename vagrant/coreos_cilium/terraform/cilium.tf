@@ -236,9 +236,13 @@ EOF
 
       spec {
 
+        dns_policy   = "ClusterFirstWithHostNet"
+        host_network = true
+        host_pid     = false
+
         #priorityClassName: system-node-critical
         restart_policy                   = "Always"
-        service_account                  = "cilium"
+        #service_account                  = "cilium"
         service_account_name             = "cilium"
         termination_grace_period_seconds = 1
         #tolerations:
@@ -280,7 +284,7 @@ EOF
               config_map_key_ref {
                 key      = "flannel-master-device"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -291,7 +295,7 @@ EOF
               config_map_key_ref {
                 key      = "flannel-uninstall-on-exit"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -304,7 +308,7 @@ EOF
               config_map_key_ref {
                 key      = "prometheus-serve-addr"
                 name     = "cilium-metrics-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -320,19 +324,19 @@ EOF
           lifecycle {
             post_start {
               exec {
-                command = "/cni-install.sh"
+                command = [ "/cni-install.sh" ]
               }
             }
             pre_stop {
               exec {
-                command = "/cni-uninstall.sh"
+                command = [ "/cni-uninstall.sh" ]
               }
             }
           }
 
           liveness_probe {
             exec {
-              command = "cilium status --brief"
+              command = [ "cilium status --brief" ]
             }
             failure_threshold = 10
             # The initial delay for the liveness probe is intentionally large to
@@ -346,16 +350,16 @@ EOF
 
           name = "cilium-agent"
 
-          ports {
-            containerPort = 9090
-            hostPort      = 9090
-            name          = "prometheus"
-            protocol      = "TCP"
+          port {
+            container_port = 9090
+            host_port      = 9090
+            name           = "prometheus"
+            protocol       = "TCP"
           }
 
           readiness_probe {
             exec {
-              command = "cilium status --brief"
+              command = [ "cilium status --brief" ]
             }
 
             failure_threshold     = 3
@@ -365,7 +369,7 @@ EOF
             timeout_seconds       = 5
           }
 
-          securityContext {
+          security_context {
             capabilities {
               add = [
                 "NET_ADMIN",
@@ -432,10 +436,6 @@ EOF
             read_only  = true
           }
 
-          dns_policy   = "ClusterFirstWithHostNet"
-          host_network = true
-          host_pid     = false
-
         } # agent container
 
         init_container {
@@ -451,7 +451,7 @@ EOF
               config_map_key_ref {
                 key      = "clean-cilium-state"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -462,7 +462,7 @@ EOF
               config_map_key_ref {
                 key      = "clean-cilium-bpf-state"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -473,7 +473,7 @@ EOF
               config_map_key_ref {
                 key      = "wait-bpf-mount"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -502,7 +502,7 @@ EOF
           name = "cilium-run"
           host_path {
             path = "/var/run/cilium"
-            type = "DirectoryOrCreate"
+            #type = "DirectoryOrCreate"
           }
         }
 
@@ -511,7 +511,7 @@ EOF
           name = "bpf-maps"
           host_path {
             path = "/sys/fs/bpf"
-            type = "DirectoryOrCreate"
+            #type = "DirectoryOrCreate"
           }
         }
 
@@ -520,7 +520,7 @@ EOF
           name = "docker-socket"
           host_path {
             path = "/var/run/docker.sock"
-            type = "Socket"
+            #type = "Socket"
           }
         }
 
@@ -529,7 +529,7 @@ EOF
           name = "cni-path"
           host_path {
             path = "/opt/cni/bin"
-            type = "DirectoryOrCreate"
+            #type = "DirectoryOrCreate"
           }
         }
 
@@ -538,7 +538,7 @@ EOF
           name = "etc-cni-netd"
           host_path {
             path = "/etc/cni/net.d"
-            type = "DirectoryOrCreate"
+            #type = "DirectoryOrCreate"
           }
         }
 
@@ -555,7 +555,7 @@ EOF
           name = "etcd-config-path"
           config_map {
             name = "cilium-config"
-            default_mode = 420
+            default_mode = "0420"
             items {
               key  = "etcd-config"
               path = "etcd.config"
@@ -567,8 +567,8 @@ EOF
         volume {
           name = "etcd-secrets"
           secret {
-            default_mode = 420
-            optional     = true
+            default_mode = "0420"
+            #optional     = true
             secret_name  = "cilium-etcd-secrets"
           }
         }
@@ -577,8 +577,8 @@ EOF
         volume {
           name = "clustermesh-secrets"
           secret {
-            default_mode = 420
-            optional     = true
+            default_mode = "0420"
+            #optional     = true
             secret_name  = "cilium-clustermesh"
           }
         }
@@ -586,7 +586,7 @@ EOF
         # To read the configuration from the config map
         volume {
           name = "cilium-config-path"
-          configMap {
+          config_map {
             name = "cilium-config"
           }
         }
@@ -594,7 +594,7 @@ EOF
 
     } # end spec
 
-    update_strategy {
+    strategy {
       type = "RollingUpdate"
       rolling_update {
         # Specifies the maximum number of Pods that can be unavailable during the update process.
@@ -686,7 +686,7 @@ resource "kubernetes_deployment" "cilium-operator" {
               config_map_key_ref {
                 key      = "debug"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -697,7 +697,7 @@ resource "kubernetes_deployment" "cilium-operator" {
               config_map_key_ref {
                 key      = "cluster-name"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -708,7 +708,7 @@ resource "kubernetes_deployment" "cilium-operator" {
               config_map_key_ref {
                 key      = "cluster-id"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -719,7 +719,7 @@ resource "kubernetes_deployment" "cilium-operator" {
               config_map_key_ref {
                 key      = "disable-endpoint-crd"
                 name     = "cilium-config"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -730,7 +730,7 @@ resource "kubernetes_deployment" "cilium-operator" {
               secret_key_ref {
                 key      = "AWS_ACCESS_KEY_ID"
                 name     = "cilium-aws"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -741,7 +741,7 @@ resource "kubernetes_deployment" "cilium-operator" {
               secret_key_ref {
                 key      = "AWS_SECRET_ACCESS_KEY"
                 name     = "cilium-aws"
-                optional = true
+                #optional = true
               }
             }
           }
@@ -752,13 +752,13 @@ resource "kubernetes_deployment" "cilium-operator" {
               secret_key_ref {
                 key      = "AWS_DEFAULT_REGION"
                 name     = "cilium-aws"
-                optional = true
+                #optional = true
               }
             }
           }
 
-          livenessProbe {
-            httpGet {
+          liveness_probe {
+            http_get {
               path   = "/healthz"
               port   = 9234
               scheme = "HTTP"
@@ -777,22 +777,22 @@ resource "kubernetes_deployment" "cilium-operator" {
           volume_mount {
             mount_path = "/var/lib/etcd-secrets"
             name      = "etcd-secrets"
-            readOnly  = true
+            read_only = true
           }
         } # end container
 
         dns_policy           = "ClusterFirst"
-        priority_class_name  = "system-node-critical"
+        #priority_class_name  = "system-node-critical"
         restart_policy       = "Always"
-        service_account      = "cilium-operator"
+        #service_account      = "cilium-operator"
         service_account_name = "${kubernetes_service_account.cilium-operator.metadata.name}"
 
         # To read the etcd config stored in config maps
         volume {
           name = "etcd-config-path"
-          configMap {
+          config_map {
             name         = "${kubernetes_config_map.cilium-config.metadata.name}"
-            default_mode = 420
+            default_mode = "0420"
             items {
               key  = "etcd-config"
               path = "etcd.config"
@@ -804,9 +804,9 @@ resource "kubernetes_deployment" "cilium-operator" {
         volume {
           name = "etcd-secrets"
           secret {
-            default_mode = 420
-            optional     = true
-            secretName   = "cilium-etcd-secrets"
+            default_mode = "0420"
+            #optional     = true
+            secret_name  = "cilium-etcd-secrets"
           }
         } # end volume
 
