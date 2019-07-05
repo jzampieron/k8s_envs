@@ -1,6 +1,18 @@
 # This is a breakdown of the cilium-external-etcd.yaml file
 # into terraform kubernetes provider compatible stuff.
 
+resource "null_resource" "cilium-pods" {
+    count = 1
+    depends_on = [
+      "kubernetes_cluster_role_binding.cilium",
+      "kubernetes_cluster_role_binding.cilium-operator",
+      "kubernetes_config_map.cilium-config"
+    ]
+    provisioner "local-exec" {
+        command = "kubectl --context=${var.k8s_cluster_context} apply -f ${path.cwd}/files/cilium-base.yaml"
+    }
+}
+
 resource "kubernetes_service_account" "cilium-operator" {
   metadata {
     name      = "cilium-operator"
@@ -145,13 +157,13 @@ resource "kubernetes_cluster_role_binding" "cilium-operator" {
 
   role_ref {
     kind      = "ClusterRole"
-    name      = "cilium-operator"
+    name      = "${kubernetes_cluster_role.cilium-operator.metadata.0.name}"
     api_group = "rbac.authorization.k8s.io"
   }
 
   subject {
     kind      = "ServiceAccount"
-    name      = "cilium-operator"
+    name      = "${kubernetes_service_account.cilium-operator.metadata.0.name}"
     namespace = "kube-system"
   }
 }
@@ -164,12 +176,12 @@ resource "kubernetes_cluster_role_binding" "cilium" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "cilium"
+    name      = "${kubernetes_cluster_role.cilium.metadata.0.name}"
   }
 
   subject {
     kind      = "ServiceAccount"
-    name      = "cilium"
+    name      = "${kubernetes_service_account.cilium.metadata.0.name}"
     namespace = "kube-system"
   }
 
