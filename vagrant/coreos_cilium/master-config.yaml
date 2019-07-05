@@ -115,9 +115,7 @@ coreos:
         ExecStartPre=/usr/bin/chmod +x /opt/bin/kubelet
         ExecStart=/opt/bin/kubelet \
         --address=0.0.0.0 \
-        --allow-privileged=true \
         --kubeconfig=/etc/kubernetes/kubeconfig \
-        --require-kubeconfig \
         --cluster-dns=10.100.0.10 \
         --cluster-domain=cluster.local \
         --hostname-override=$private_ipv4 \

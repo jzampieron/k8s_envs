@@ -1,12 +1,13 @@
 #helm install --namespace rook-ceph rook-release/rook-ceph
 resource "helm_release" "rook-operator" {
-    depends_on = [ "helm_release.coredns" ]
-    name       = "rook"
-    namespace  = "rook-ceph"
-    repository = "${data.helm_repository.rook.metadata.0.name}"
-    chart      = "rook-ceph"
+  depends_on = [helm_release.coredns]
+  name       = "rook"
+  namespace  = "rook-ceph"
+  repository = data.helm_repository.rook.metadata[0].name
+  chart      = "rook-ceph"
 
-    values = [ <<EOF
+  values = [
+    <<EOF
         resources:
             limits:
                 cpu: 100m
@@ -15,5 +16,7 @@ resource "helm_release" "rook-operator" {
                 cpu: 100m
                 memory: 128Mi
 EOF
-    ]
+,
+]
 }
+

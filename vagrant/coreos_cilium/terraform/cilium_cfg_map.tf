@@ -4,7 +4,7 @@ resource "kubernetes_config_map" "cilium-config" {
     namespace = "kube-system"
   }
 
-  data {
+  data = {
     # This etcd-config contains the etcd endpoints of your cluster. If you use
     # TLS please make sure you follow the tutorial in https://cilium.link/etcd-config
     etcd-config = <<EOF
@@ -25,32 +25,21 @@ resource "kubernetes_config_map" "cilium-config" {
       # key-file: '/var/lib/etcd-secrets/etcd-client.key'
       # cert-file: '/var/lib/etcd-secrets/etcd-client.crt'
 EOF
+
     # If you want to run cilium in debug mode change this value to true
     debug = "false"
-
-    # If you want metrics enabled in all of your Cilium agents, set the port for
-    # which the Cilium agents will have their metrics exposed.
-    # This option deprecates the "prometheus-serve-addr" in the
-    # "cilium-metrics-config" ConfigMap
-    # NOTE that this will open the port on ALL nodes where Cilium pods are
-    # scheduled.
-    # prometheus-serve-addr: ":9090"
-
     # Enable IPv4 addressing. If enabled, all endpoints are allocated an IPv4
     # address.
     enable-ipv4 = "true"
-
     # Enable IPv6 addressing. If enabled, all endpoints are allocated an IPv6
     # address.
     enable-ipv6 = "true"
-
     # If a serious issue occurs during Cilium startup, this
     # invasive option may be set to true to remove all persistent
     # state. Endpoints will not be restored using knowledge from a
     # prior Cilium run, so they may receive new IP addresses upon
     # restart. This also triggers clean-cilium-bpf-state.
     clean-cilium-state = "false"
-
     # If you want to clean cilium BPF state, set this to true;
     # Removes all BPF maps from the filesystem. Upon restart,
     # endpoints are restored with the same IP addresses, however
@@ -59,16 +48,13 @@ EOF
     # connections via a service may be loadbalanced to a different
     # backend after restart.
     clean-cilium-bpf-state = "false"
-
     # Users who wish to specify their own custom CNI configuration file must set
     # custom-cni-conf to "true", otherwise Cilium may overwrite the configuration.
     custom-cni-conf = "false"
-
     # If you want cilium monitor to aggregate tracing for packets, set this level
     # to "low", "medium", or "maximum". The higher the level, the less packets
     # that will be seen in monitor output.
     monitor-aggregation = "none"
-
     # ct-global-max-entries-* specifies the maximum number of connections
     # supported across all endpoints, split by protocol: tcp or other. One pair
     # of maps uses these values for IPv4 connections, and another pair of maps
@@ -82,7 +68,6 @@ EOF
     # during the upgrade process, comment out these options.
     bpf-ct-global-tcp-max = "524288"
     bpf-ct-global-any-max = "262144"
-
     # Pre-allocation of map entries allows per-packet latency to be reduced, at
     # the expense of up-front memory allocation for the entries in the maps. The
     # default value below will minimize memory usage in the default installation;
@@ -100,43 +85,32 @@ EOF
     # If this option is set to "false" during an upgrade from 1.3 or earlier to
     # 1.4 or later, then it may cause one-time disruptions during the upgrade.
     preallocate-bpf-maps = "false"
-
     # Regular expression matching compatible Istio sidecar istio-proxy
     # container image names
     sidecar-istio-proxy-image = "cilium/istio_proxy"
-
     # Encapsulation mode for communication between nodes
     # Possible values:
     #   - disabled
     #   - vxlan (default)
     #   - geneve
     tunnel = "vxlan"
-
     # Name of the cluster. Only relevant when building a mesh of clusters.
     cluster-name = "default"
-
-    # Unique ID of the cluster. Must be unique across all conneted clusters and
-    # in the range of 1 and 255. Only relevant when building a mesh of clusters.
-    #cluster-id: 1
-
     # Interface to be used when running Cilium on top of a CNI plugin.
     # For flannel, use "cni0"
     flannel-master-device = ""
-
     # When running Cilium with policy enforcement enabled on top of a CNI plugin
     # the BPF programs will be installed on the network interface specified in
     # 'flannel-master-device' and on all network interfaces belonging to
     # a container. When the Cilium DaemonSet is removed, the BPF programs will
     # be kept in the interfaces unless this option is set to "true".
     flannel-uninstall-on-exit = "false"
-
     # Installs a BPF program to allow for policy enforcement in already running
     # containers managed by Flannel.
     # NOTE: This requires Cilium DaemonSet to be running in the hostPID.
     # To run in this mode in Kubernetes change the value of the hostPID from
     # false to true. Can be found under the path `spec.spec.hostPID`
     flannel-manage-existing-containers = "false"
-
     # DNS Polling periodically issues a DNS lookup for each `matchName` from
     # cilium-agent. The result is used to regenerate endpoint policy.
     # DNS lookups are repeated with an interval of 5 seconds, and are made for
@@ -157,13 +131,22 @@ EOF
     # [0] http://docs.cilium.io/en/stable/policy/language/#dns-based
     # [1] http://docs.cilium.io/en/stable/install/upgrade/#changes-that-may-require-action
     tofqdns-enable-poller = "false"
-
     # wait-bpf-mount makes init container wait until bpf filesystem is mounted
     wait-bpf-mount = "false"
-
     # Enable legacy services (prior v1.5) to prevent from terminating existing
     # connections with services when upgrading Cilium from < v1.5 to v1.5.
     enable-legacy-services = "false"
   }
+  # If you want metrics enabled in all of your Cilium agents, set the port for
+  # which the Cilium agents will have their metrics exposed.
+  # This option deprecates the "prometheus-serve-addr" in the
+  # "cilium-metrics-config" ConfigMap
+  # NOTE that this will open the port on ALL nodes where Cilium pods are
+  # scheduled.
+  # prometheus-serve-addr: ":9090"
+
+  # Unique ID of the cluster. Must be unique across all conneted clusters and
+  # in the range of 1 and 255. Only relevant when building a mesh of clusters.
+  #cluster-id: 1
 }
 
